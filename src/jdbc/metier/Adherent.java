@@ -19,4 +19,18 @@ public class Adherent {
         this.nomAdhrent = nom;
         this.prenomAdherent = prenom;
     }
+
+    public int getNumAdherent() {
+        return numAdherent;
+    }
+
+    public String getNomAdhrent() {
+        return nomAdhrent;
+    }
+
+    public String getPrenomAdherent() {
+        return prenomAdherent;
+    }
+    
+    
 }

@@ -17,13 +17,51 @@ public class Representation {
     private int numSalle;
     private Date dateRepresentation;
     private double tarif;
+    private String nomSpectacle;
+    private int nbPersRes;
+    private int nbPersMax;
 
-    public Representation(int numRepresentation, int numSpectales, int numSalle, Date dateRepresentation, double tarif) {
+    public Representation(int numRepresentation, int numSpectales, int numSalle, Date dateRepresentation, double tarif,String nomSpectacle,int nbPersMax, int nbPersRes) {
         this.numRepresentation = numRepresentation;
         this.numSpectales = numSpectales;
         this.numSalle = numSalle;
         this.dateRepresentation = dateRepresentation;
         this.tarif = tarif;
+        this.nbPersRes = nbPersRes;
+        this.nbPersMax = nbPersMax;
+        this.nomSpectacle = nomSpectacle;
+    }
+
+    public int getNumRepresentation() {
+        return numRepresentation;
+    }
+
+    public int getNumSpectales() {
+        return numSpectales;
+    }
+
+    public int getNumSalle() {
+        return numSalle;
+    }
+
+    public Date getDateRepresentation() {
+        return dateRepresentation;
+    }
+
+    public double getTarif() {
+        return tarif;
+    }
+
+    public String getNomSpectacle() {
+        return nomSpectacle;
+    }
+
+    public int getNbPersRes() {
+        return nbPersRes;
+    }
+
+    public int getNbPersMax() {
+        return nbPersMax;
     }
     
 }

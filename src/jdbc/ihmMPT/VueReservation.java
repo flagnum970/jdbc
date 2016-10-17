@@ -8,11 +8,15 @@ package jdbc.ihmMPT;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.text.NumberFormat;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import jdbc.observer.Observable;
 import jdbc.observer.Observer;
 import javax.swing.JFormattedTextField;
 import jdbc.controler.AbstractControler;
+import jdbc.metier.Adherent;
+import jdbc.metier.Representation;
+import jdbc.modele.AbstractModel;
 import jdbc.observer.WhatChanged;
 
 /**
@@ -23,11 +27,11 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
 
   //L'instance de notre objet contrôleur
   private AbstractControler controler;
-    
+  
     /**
      * Creates new form IHMReservations
      */
-    public VueReservation(AbstractControler controler) {
+    public VueReservation(AbstractControler controler, AbstractModel model) {
         
         //centrer la fenetre
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -36,6 +40,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
         
         initComponents();
         this.controler= controler;
+
     }
 
     /**
@@ -48,45 +53,53 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLblRepresentation = new javax.swing.JLabel();
-        jCboAdherent = new javax.swing.JComboBox<>();
         jLblAdherent = new javax.swing.JLabel();
+        jCboAdherent = new javax.swing.JComboBox<>();
+        jLblRepresentation = new javax.swing.JLabel();
         jCboRepresentation = new javax.swing.JComboBox<>();
         jLblNbPersonnes = new javax.swing.JLabel();
-        jFTxtNbPers =  new JFormattedTextField(NumberFormat.getIntegerInstance(Locale.FRANCE));
+        jTxtNbPers = new javax.swing.JTextField();
         jLblTotal = new javax.swing.JLabel();
         jTxtTotal = new javax.swing.JTextField();
         jBtnValider = new javax.swing.JButton();
         jBtnQuitter = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Nouvelle réservation");
         setName("frmReservation"); // NOI18N
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setLayout(new java.awt.GridLayout(5, 2));
-
-        jLblRepresentation.setText("Représentation :");
-        jPanel1.add(jLblRepresentation);
-
-        jCboAdherent.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jCboAdherent.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCboAdherentActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jCboAdherent);
+        jPanel1.setLayout(new java.awt.GridLayout(5, 1));
 
         jLblAdherent.setText("Adhérent :");
         jPanel1.add(jLblAdherent);
+        validate();
 
-        jCboRepresentation.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel1.add(jCboAdherent);
+        validate();
+
+        jLblRepresentation.setText("Représentation :");
+        jPanel1.add(jLblRepresentation);
+        validate();
+
         jPanel1.add(jCboRepresentation);
+        validate();
 
         jLblNbPersonnes.setText("Nombre de personnes");
         jPanel1.add(jLblNbPersonnes);
-        jPanel1.add(jFTxtNbPers);
+        validate();
+
+        jTxtNbPers.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTxtNbPersFocusLost(evt);
+            }
+        });
+        jTxtNbPers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTxtNbPersActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jTxtNbPers);
 
         jLblTotal.setText("Total :");
         jPanel1.add(jLblTotal);
@@ -96,6 +109,11 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
         jPanel1.add(jTxtTotal);
 
         jBtnValider.setText("Valider");
+        jBtnValider.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnValiderActionPerformed(evt);
+            }
+        });
         jPanel1.add(jBtnValider);
 
         jBtnQuitter.setText("Quitter");
@@ -106,10 +124,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
         });
         jPanel1.add(jBtnQuitter);
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 23, 410, 160));
-
-        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 23, 450, 160));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -117,29 +132,43 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
     private void jBtnQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnQuitterActionPerformed
         
         //Fermeture de la base
-      //  BdD.close();
-        
+        controler.closeDB();        
         //on quitte
         System.exit(0);
     }//GEN-LAST:event_jBtnQuitterActionPerformed
 
-    private void jCboAdherentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCboAdherentActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCboAdherentActionPerformed
+    private void jTxtNbPersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtNbPersActionPerformed
+        controler.setNbPersonnes(jTxtNbPers.getText().trim());
+    }//GEN-LAST:event_jTxtNbPersActionPerformed
 
+    private void jTxtNbPersFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTxtNbPersFocusLost
+        controler.setNbPersonnes(jTxtNbPers.getText().trim());
+    }//GEN-LAST:event_jTxtNbPersFocusLost
+
+    private void jBtnValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnValiderActionPerformed
+        controler.save();
+    }//GEN-LAST:event_jBtnValiderActionPerformed
+
+    private void jCboRepresentationActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        controler.setRepresentation(jCboRepresentation.getSelectedIndex());    
+    }   
+    
+    private void jCboAdherentActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        controler.setAdherent(jCboAdherent.getSelectedIndex());    
+    }   
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnQuitter;
     private javax.swing.JButton jBtnValider;
     private javax.swing.JComboBox<String> jCboAdherent;
     private javax.swing.JComboBox<String> jCboRepresentation;
-    private javax.swing.JFormattedTextField jFTxtNbPers;
     private javax.swing.JLabel jLblAdherent;
     private javax.swing.JLabel jLblNbPersonnes;
     private javax.swing.JLabel jLblRepresentation;
     private javax.swing.JLabel jLblTotal;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JTextField jTxtNbPers;
     private javax.swing.JTextField jTxtTotal;
     // End of variables declaration//GEN-END:variables
  
@@ -148,9 +177,42 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
     public void update(WhatChanged wc) {
         
           switch (wc.mess) {
-              case MSG_INIT : this.jFTxtNbPers.setText(String.valueOf((Integer)wc.O1));
-                                  break;
-              default           : break;
+              case MSG_INIT : 
+                                this.jTxtNbPers.setText(String.valueOf((Integer)wc.O1));
+                                LinkedHashMap<Integer,Adherent> hash =(LinkedHashMap<Integer,Adherent>) wc.O2;
+                                jCboAdherent.removeAllItems();
+                                for (Adherent a : (hash.values())) {
+                                    jCboAdherent.addItem(a.getNomAdhrent()+" "+a.getPrenomAdherent());
+                                }  
+                                jCboAdherent.setSelectedIndex(-1);
+                                jCboRepresentation.removeAll();
+                                LinkedHashMap<Integer,Representation> hashR =(LinkedHashMap<Integer,Representation>) wc.O3;
+                                for (Representation r : (hashR.values())) {
+                                    jCboRepresentation.addItem(r.getDateRepresentation()+" "+r.getNomSpectacle());
+                                }  
+                                jCboRepresentation.setSelectedIndex(-1);
+                                jCboRepresentation.addActionListener(new java.awt.event.ActionListener() {
+                                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                              jCboRepresentationActionPerformed(evt);
+                                        }
+                                });
+                               jCboAdherent.addActionListener(new java.awt.event.ActionListener() {
+                                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                            jCboAdherentActionPerformed(evt);
+                                        }
+                                });
+                                jTxtNbPers.setText(String.valueOf((int)wc.O4));
+                                jTxtTotal.setText(String.valueOf((double)wc.O5));
+                                break;
+              case MSG_TOTAL : 
+                                jTxtTotal.setText(String.valueOf((double)wc.O1));
+                                break;
+              case MSG_NBPERS :
+                                jTxtNbPers.setText(String.valueOf((int)wc.O1));
+                                jTxtTotal.setText(String.valueOf((double)wc.O2));
+                                break;
+                
+              default       : break;
 
           }
 

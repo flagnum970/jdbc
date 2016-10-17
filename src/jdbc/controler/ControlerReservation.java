@@ -14,34 +14,42 @@ public class ControlerReservation extends AbstractControler {
     super(modelReservation);
   }
 
-  public void control() {
-    //On notifie le modèle d'une action si le contrôle est bon
-    //--------------------------------------------------------
-      
-    //Si l'opérateur est dans la liste
+  public boolean control() {
+      return  true;
+  }
+ 
+  public void setNbPersonnes(String sNbPers) {
     
-        //Si l'opérateur est = 
-      //if (this.numAdherent!=-1)
-      //  this.res.getResultat(); //On ordonne au modèle d'afficher le résultat
-      
-      //si l'adhérent a été selectionné
-      if (this.numAdherent !=-1)
-        this.res.setAdherent(this.numAdherent);  // on met à jour le modele
-    
-      //si la représentation a été selectionné
-      if (this.numRepresentation !=-1) {
-        this.res.setRepresentation(this.numRepresentation); 
-        this.res.setMaxPers(this.numRepresentation);
-        this.res.getTotal(); //On ordonne au modele d'afficher le résultat
-               
+    int nbPers;
+    try {
+           nbPers = Integer.valueOf(sNbPers);
+           if (nbPers < 1) 
+                   nbPers = 1;
+      } catch (Exception e) {
+            nbPers = 1;
       }
+      System.out.println("max salle : "+model.getPersMax()+ " reservé : "+model.getPersRes()+" nbpers "+nbPers);
       
-      //Si le nb de personnes à été renseignné et est inférieur au max
-      if ((this.nbPers >=0) && this.nbPers<=(this.maxPers - this.total))
-          this.res.setNbPersonnes(this.nbPers);
-          
+      int nbPlacesRestantes = model.getPersMax()-model.getPersRes();
+      if (nbPers>nbPlacesRestantes) 
+          nbPers = nbPlacesRestantes;
       
-      
+      model.setNbPersonnes(nbPers);
   }
   
+  public void save() {
+      if (model.control()) {
+          model.insertReservation();
+          model.initModelReservation();
+      }
+          
+  }
+  public void reset() {
+    this.model.reset();
+  }
+  
+  public void closeDB() {
+      model.closeDB();
+  }
+      
 }

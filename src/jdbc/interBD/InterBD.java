@@ -94,10 +94,6 @@ public class InterBD {
             Logger.getLogger(InterBD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- 
-    /**
-     * Exemple d'utilisation de la class
-     * @param args
-     */
+
     
 }

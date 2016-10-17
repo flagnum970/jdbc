@@ -5,6 +5,8 @@
  */
 package jdbc.controler;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import jdbc.modele.AbstractModel;
 
 /**
@@ -12,34 +14,29 @@ import jdbc.modele.AbstractModel;
  * @author cflagollet
  */
 public abstract class AbstractControler {
-  protected AbstractModel res;
+  protected AbstractModel model;
   
-  protected int numAdherent = 0, numRepresentation = 0,nbPers = 0,total =0,maxPers;
-  protected ArrayList<String> listOperateur = new ArrayList<String>();
-
-  public AbstractControler(AbstractModel res){
-    this.res = res;
-    
+  public AbstractControler(AbstractModel model){
+    this.model = model; 
    }
-   
-  //Définit l'opérateur
+  
+  public abstract void closeDB();
+  
   public void setAdherent(int numAdherent){
-    
-      this.numAdherent = numAdherent;
-    
+      model.setAdherent(numAdherent);
   }
-   
-  //Définit le nombre
-  public void setnumRepresentation(int numRepresentation){
-    this.numRepresentation = numRepresentation;
+  
+  public abstract void setNbPersonnes(String sNbPers);
     
+  public void setRepresentation(int numRepresentation){ 
+    model.setRepresentation(numRepresentation);
   }
    
   //Efface
-  public void reset(){
-    this.res.reset();
-  }
+  public abstract void reset(); 
    
+  public abstract void save();
+  
   //Méthode de contrôle
-  abstract void control();
+  abstract boolean control();
 }

@@ -31,7 +31,7 @@ public class Application {
         
          AbstractModel mr = new ModelReservation(interbd);
          AbstractControler cr = new ControlerReservation(mr);
-         VueReservation vr = new VueReservation(cr);
+         VueReservation vr = new VueReservation(cr,mr);
         
          mr.addObserver(vr);
          mr.initModelReservation();
