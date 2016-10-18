@@ -49,7 +49,7 @@ public class ControlerReservation extends AbstractControler {
       System.exit(0);   
   }
       
-  public  void setAdherent(int numAdherent){
+  public void setAdherent(int numAdherent){
       model.setAdherent(numAdherent);
   }
   

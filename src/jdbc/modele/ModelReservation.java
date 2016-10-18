@@ -27,8 +27,7 @@ public class ModelReservation extends AbstractModel{
     public ModelReservation(InterBD interbd) {
         super(interbd);
         hashAdherent = selectLstAdherent();//= new LinkedHashMap<Integer, Adherent>();
-        hashRepresentation = selectLstRepresentation();
-        
+        hashRepresentation = selectLstRepresentation();   
     }
 
     public void initModelReservation() {
@@ -53,7 +52,9 @@ public class ModelReservation extends AbstractModel{
       
     }
     
-  //Réinitialise tout
+  /**
+   * Réinitialise tout
+   */
     @Override
   public void reset(){
     System.out.println("remise à 0 des champs");  
@@ -65,9 +66,8 @@ public class ModelReservation extends AbstractModel{
     this.numAdherent =0;
     this.numRepresentation =0;
     this.nbPersRes = -1;
-    hashRepresentation = selectLstRepresentation();
-    //Mise à jour !
-    notifyObserver(new WhatChanged(type_message.MSG_RESET,this.cboAdherentIndexSelected,this.cboRepresentationIndexSelected,this.nbPers,this.total));
+    hashRepresentation = selectLstRepresentation(); //on recharge la combo pour MAJ le  nombre de places dispos!
+  
   }
 
   //Calcul
