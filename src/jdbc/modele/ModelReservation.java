@@ -95,34 +95,22 @@ public class ModelReservation extends AbstractModel{
             setTotal();
             notifyObserver(new WhatChanged(type_message.MSG_CBO_REPRESENTATION,this.total));
            
-            if ((this.nbPersMax-this.nbPersRes) == 0) 
-                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
-            else if ((this.nbPersMax-this.nbPersRes) <this.nbPers)
-                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+(this.nbPersMax-this.nbPersRes)+" places pour cette représentation"));
-            else 
-                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
+        Boolean bOk = controlNbPlaces();
            
         }
     }
 
     @Override
     public void setNbPersonnes(int nbPers) {
-        int nbPlacesRestantes = this.getPersMax()-this.getPersRes();
+        Boolean bOk = true;
         if (this.getPersMax() != -1) {
-            if (nbPers>nbPlacesRestantes) {        
-                if ((this.nbPersMax-this.nbPersRes) == 0)
-                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
-                else if ((this.nbPersMax-this.nbPersRes) <this.nbPers) {
-                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+(this.nbPersMax-this.nbPersRes)+" places pour cette représentation"));
-                    nbPers = nbPlacesRestantes;
-                } else 
-                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
-            }
-
-        this.nbPers=nbPers;
+            this.nbPers=nbPers;
+            bOk = controlNbPlaces();
+        }
+             
         setTotal();
         notifyObserver(new WhatChanged(type_message.MSG_NBPERS,this.nbPers,this.total));
-        }
+       
     }
     
     public  int getPersMax() {
@@ -141,6 +129,10 @@ public class ModelReservation extends AbstractModel{
         this.nbPersMax = nbPersMax;
     }
     
+    /** sélection des adhérents 
+     * 
+     * @return : renvoie une Linked HashMap (donc qui respecte l'ordre d'insertion)
+     */
     public LinkedHashMap<Integer,Adherent> selectLstAdherent () {
         LinkedHashMap<Integer,Adherent> hash = new LinkedHashMap<Integer,Adherent>();
         String req = "select numAdherent, TRIM(nomAdherent), TRIM(prenomAdherent) from adherent";
@@ -157,7 +149,11 @@ public class ModelReservation extends AbstractModel{
         return hash;
            
     }
-            
+    /**
+     * 
+     * selection des représentions, du nombre de de places dans la salle, et du nombre de réservations déjà effectuées
+     * @return : renvoie une Linked HashMap (donc qui respecte l'ordre d'insertion)
+     */        
     public LinkedHashMap<Integer,Representation>  selectLstRepresentation() {
         String req =    "select r.numRepresentation,r.numSpectacle,r.numSalle,r.dateRepresentation,r.tarif,trim(s.nomspectacle), \n" +
                         "sa.nbplaces,sum(rs.nbpersonnes) \n" +
@@ -166,7 +162,6 @@ public class ModelReservation extends AbstractModel{
                         "left join reservation rs on rs.numrepresentation = r.numrepresentation \n" +
                         "group by r.numRepresentation,r.numSpectacle,r.numSalle,r.dateRepresentation,r.tarif,trim(s.nomspectacle), \n" +
                         "sa.nbplaces order by r.DATEREPRESENTATION asc, r.NUMREPRESENTATION asc";
-
 
         LinkedHashMap<Integer,Representation> hash = new LinkedHashMap<Integer,Representation>();
          ResultSet rs = interbd.exec(req);
@@ -183,6 +178,9 @@ public class ModelReservation extends AbstractModel{
         return hash;
     }
     
+    /** insertion de la réservation 
+     * Le numéro de réservation est valorisé automatiquement dans la base (sequence + trigger : auto-incrément
+     */
     public void insertReservation() {
          Reservation r = new Reservation(numRepresentation, numAdherent, nbPers);
          
@@ -195,10 +193,17 @@ public class ModelReservation extends AbstractModel{
              interbd.update("commit");
     }
 
+    /**
+     * Femeture de la base
+     */
     public void closeDB() {
         interbd.close();
     }
 
+    /** 
+     * contrôle des données: tout doit être renseigné et le nombre de places inférieur ou égal au disponible
+     * @return boolean qui indique si contrôle ok ou pas
+     */
     public boolean control() {
         boolean bOk = true;
         
@@ -206,22 +211,26 @@ public class ModelReservation extends AbstractModel{
             bOk = false;
             notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Veuillez renseigner tous les champs"));
         } else 
+            bOk = controlNbPlaces();
+       
+        return bOk;
+    }
+    
+    private boolean controlNbPlaces() {
+        Boolean bOk = true;
+        int nbPlacesRestantes = this.getPersMax()-this.getPersRes();
+        
+        if (this.nbPers>nbPlacesRestantes) {        
+            bOk=false;
+            if (nbPlacesRestantes == 0)
+                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
+            else 
+                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+nbPlacesRestantes+" places pour cette représentation"));
+        } else 
             notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
         
-        int nbPlacesRestantes = this.getPersMax()-this.getPersRes();
-        if (bOk) {
-            if (this.nbPers>nbPlacesRestantes) {        
-                bOk=false;
-                if ((this.nbPersMax-this.nbPersRes) == 0)
-                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
-                else if ((this.nbPersMax-this.nbPersRes) <this.nbPers) {
-                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+(this.nbPersMax-this.nbPersRes)+" places pour cette représentation"));
-                    nbPers = nbPlacesRestantes;
-                } else 
-                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
-            }
-        }
         return bOk;
     }
             
+    
 }

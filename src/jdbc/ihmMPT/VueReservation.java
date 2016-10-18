@@ -124,7 +124,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
 
         jLblErreur.setForeground(new java.awt.Color(255, 0, 51));
         jLblErreur.setPreferredSize(new java.awt.Dimension(52, 14));
-        getContentPane().add(jLblErreur, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 240, -1));
+        getContentPane().add(jLblErreur, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 420, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
