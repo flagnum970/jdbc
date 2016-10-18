@@ -6,7 +6,7 @@
 package jdbc.observer;
 
 /**
- *
+ * Interface Observer implémentée par la vue
  * @author cflagollet
  */
 public interface Observer {

@@ -21,6 +21,17 @@ public class Representation {
     private int nbPersRes;
     private int nbPersMax;
 
+    /**
+     * Constructeur d'une représentation
+     * @param numRepresentation
+     * @param numSpectales
+     * @param numSalle
+     * @param dateRepresentation
+     * @param tarif
+     * @param nomSpectacle
+     * @param nbPersMax
+     * @param nbPersRes 
+     */
     public Representation(int numRepresentation, int numSpectales, int numSalle, Date dateRepresentation, double tarif,String nomSpectacle,int nbPersMax, int nbPersRes) {
         this.numRepresentation = numRepresentation;
         this.numSpectales = numSpectales;

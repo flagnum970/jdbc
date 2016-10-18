@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Classe d'accès à la base de données : connexion, fermeture, select, mise à jour
  * @author cflagollet
  */
 public class InterBD {
@@ -58,9 +58,9 @@ public class InterBD {
     }
  
     /**
-     * Executer une requete SQL
+     * Execution une requete SQL de sélection
      * @param sql
-     * @return resultat de la requete
+     * @return resultset de la requete
      */
     public ResultSet exec(String sql) {
         try {
@@ -72,6 +72,11 @@ public class InterBD {
         return null;
     }
     
+    /**
+     * Execution une requete SQL d'insertion/mise à jour (insert, update)
+     * @param sql
+     * @return nombre de rows mises à jour
+     */
     public int update(String sql) {
         try {
             int nbMaj = this.dbStatement.executeUpdate(sql);
@@ -83,12 +88,11 @@ public class InterBD {
     }
  
     /**
-     * Fermer la connexion au serveur de DB
+     * Fermeture la connexion au serveur de DB
      */
     public void close() {
         try {
             this.dbStatement.close();
-            this.dbConnect.close();
             this.dbConnect.close();
         } catch (SQLException ex) {
             Logger.getLogger(InterBD.class.getName()).log(Level.SEVERE, null, ex);

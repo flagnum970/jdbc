@@ -11,10 +11,14 @@ import jdbc.ihmMPT.VueReservation;
 import jdbc.interBD.InterBD;
 import jdbc.modele.AbstractModel;
 import jdbc.modele.ModelReservation;
-import jdbc.observer.Observer;
 
 /**
- *
+ * Application Test pour la mise en place du pattern MVC
+ * Gestion de resérvation de places de spectacles
+ * Base Oracle
+ * Contrôles effectués pour la réservation : 
+ * -  places restantes
+ * Toutes les représentations sont affichées (pas de controle de date
  * @author cflagollet
  */
 public class Application {
@@ -27,7 +31,10 @@ public class Application {
         InterBD interbd = new InterBD("//localhost/XE", "chris_jdbc", "root");
         if (interbd.connect()) {
         System.err.println("Connexion OK");
-        } else System.err.println("erreur connexion");
+        } else {
+            System.err.println("erreur connexion");
+            System.exit(0);
+        }
         
          AbstractModel mr = new ModelReservation(interbd);
          AbstractControler cr = new ControlerReservation(mr);

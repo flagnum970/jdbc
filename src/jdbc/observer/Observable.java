@@ -6,7 +6,7 @@
 package jdbc.observer;
 
 /**
- *
+ * interface Observable implémentée par le model
  * @author cflagollet
  */
 public interface Observable {

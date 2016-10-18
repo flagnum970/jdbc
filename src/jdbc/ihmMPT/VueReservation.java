@@ -7,12 +7,8 @@ package jdbc.ihmMPT;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.text.NumberFormat;
 import java.util.LinkedHashMap;
-import java.util.Locale;
-import jdbc.observer.Observable;
 import jdbc.observer.Observer;
-import javax.swing.JFormattedTextField;
 import jdbc.controler.AbstractControler;
 import jdbc.metier.Adherent;
 import jdbc.metier.Representation;
@@ -29,7 +25,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
   private AbstractControler controler;
   
     /**
-     * Creates new form IHMReservations
+     * Creates new form VueReservations
      */
     public VueReservation(AbstractControler controler, AbstractModel model) {
         
@@ -40,7 +36,6 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
         
         initComponents();
         this.controler= controler;
-
     }
 
     /**
@@ -63,6 +58,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
         jTxtTotal = new javax.swing.JTextField();
         jBtnValider = new javax.swing.JButton();
         jBtnQuitter = new javax.swing.JButton();
+        jLblErreur = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Nouvelle réservation");
@@ -126,33 +122,60 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 23, 450, 160));
 
+        jLblErreur.setForeground(new java.awt.Color(255, 0, 51));
+        jLblErreur.setPreferredSize(new java.awt.Dimension(52, 14));
+        getContentPane().add(jLblErreur, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 240, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /** Clic sur le bouton 'quitter'
+     * Appel au controler pour 
+     * @param evt 
+     */
     private void jBtnQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnQuitterActionPerformed
         
-        //Fermeture de la base
-        controler.closeDB();        
-        //on quitte
-        System.exit(0);
+        controler.quit();        
+        
     }//GEN-LAST:event_jBtnQuitterActionPerformed
 
+    /** 'Entrée' sur la zone de texte nombre de personnes
+     * appel au controler pour maj nbpersonnes
+     * @param evt 
+     */
     private void jTxtNbPersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtNbPersActionPerformed
         controler.setNbPersonnes(jTxtNbPers.getText().trim());
     }//GEN-LAST:event_jTxtNbPersActionPerformed
 
+    /** Perte du focus sur la zone de texte nombre de personnes
+     * appel au controler pour maj nbpersonnes
+     * @param evt 
+     */
     private void jTxtNbPersFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTxtNbPersFocusLost
         controler.setNbPersonnes(jTxtNbPers.getText().trim());
     }//GEN-LAST:event_jTxtNbPersFocusLost
 
+    /** clic sur le bouton valider 
+     * 
+     * @param evt 
+     */
     private void jBtnValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnValiderActionPerformed
         controler.save();
     }//GEN-LAST:event_jBtnValiderActionPerformed
 
+    /** selection d'une représentation 
+    * 
+    * @param evt 
+    */
     private void jCboRepresentationActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        controler.setRepresentation(jCboRepresentation.getSelectedIndex());    
+        controler.setRepresentation(jCboRepresentation.getSelectedIndex()); 
+        controler.setNbPersonnes(jTxtNbPers.getText().trim());
     }   
     
+    /** Sélection d'un adhérent
+     * 
+     * @param evt 
+     */
     private void jCboAdherentActionPerformed(java.awt.event.ActionEvent evt) {                                             
         controler.setAdherent(jCboAdherent.getSelectedIndex());    
     }   
@@ -164,6 +187,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
     private javax.swing.JComboBox<String> jCboAdherent;
     private javax.swing.JComboBox<String> jCboRepresentation;
     private javax.swing.JLabel jLblAdherent;
+    private javax.swing.JLabel jLblErreur;
     private javax.swing.JLabel jLblNbPersonnes;
     private javax.swing.JLabel jLblRepresentation;
     private javax.swing.JLabel jLblTotal;
@@ -172,7 +196,11 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
     private javax.swing.JTextField jTxtTotal;
     // End of variables declaration//GEN-END:variables
  
-    
+    /** mise à jour de la vue
+     * Envoyé par le model
+     * Utilisation de la classe WhatChanged pour savoir quelles sont les données à mettre à jour
+     * @param wc 
+     */
     @Override
     public void update(WhatChanged wc) {
         
@@ -181,22 +209,22 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
                                 this.jTxtNbPers.setText(String.valueOf((Integer)wc.O1));
                                 LinkedHashMap<Integer,Adherent> hash =(LinkedHashMap<Integer,Adherent>) wc.O2;
                                 jCboAdherent.removeAllItems();
-                                for (Adherent a : (hash.values())) {
+                                for (Adherent a : hash.values()) {
                                     jCboAdherent.addItem(a.getNomAdhrent()+" "+a.getPrenomAdherent());
                                 }  
                                 jCboAdherent.setSelectedIndex(-1);
                                 jCboRepresentation.removeAll();
                                 LinkedHashMap<Integer,Representation> hashR =(LinkedHashMap<Integer,Representation>) wc.O3;
-                                for (Representation r : (hashR.values())) {
+                                for (Representation r : hashR.values()) {
                                     jCboRepresentation.addItem(r.getDateRepresentation()+" "+r.getNomSpectacle());
                                 }  
                                 jCboRepresentation.setSelectedIndex(-1);
                                 jCboRepresentation.addActionListener(new java.awt.event.ActionListener() {
                                         public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                              jCboRepresentationActionPerformed(evt);
+                                            jCboRepresentationActionPerformed(evt);
                                         }
                                 });
-                               jCboAdherent.addActionListener(new java.awt.event.ActionListener() {
+                                jCboAdherent.addActionListener(new java.awt.event.ActionListener() {
                                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                             jCboAdherentActionPerformed(evt);
                                         }
@@ -211,13 +239,11 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
                                 jTxtNbPers.setText(String.valueOf((int)wc.O1));
                                 jTxtTotal.setText(String.valueOf((double)wc.O2));
                                 break;
-                
+              case MSG_ERREUR :
+                                jLblErreur.setText(wc.erreur);
               default       : break;
 
           }
 
-                    // Modifier l’affichag
     }
-
-
 }

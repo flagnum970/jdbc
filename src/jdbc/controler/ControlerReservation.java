@@ -15,7 +15,7 @@ public class ControlerReservation extends AbstractControler {
   }
 
   public boolean control() {
-      return  true;
+    return  model.control();
   }
  
   public void setNbPersonnes(String sNbPers) {
@@ -29,10 +29,6 @@ public class ControlerReservation extends AbstractControler {
             nbPers = 1;
       }
       System.out.println("max salle : "+model.getPersMax()+ " reservé : "+model.getPersRes()+" nbpers "+nbPers);
-      
-      int nbPlacesRestantes = model.getPersMax()-model.getPersRes();
-      if (nbPers>nbPlacesRestantes) 
-          nbPers = nbPlacesRestantes;
       
       model.setNbPersonnes(nbPers);
   }
@@ -48,8 +44,17 @@ public class ControlerReservation extends AbstractControler {
     this.model.reset();
   }
   
-  public void closeDB() {
+  public void quit() {
       model.closeDB();
+      System.exit(0);   
   }
       
+  public  void setAdherent(int numAdherent){
+      model.setAdherent(numAdherent);
+  }
+  
+  public void setRepresentation(int numRepresentation){ 
+    model.setRepresentation(numRepresentation);
+  }
+  
 }

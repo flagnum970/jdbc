@@ -56,11 +56,16 @@ public class ModelReservation extends AbstractModel{
   //Réinitialise tout
     @Override
   public void reset(){
+    System.out.println("remise à 0 des champs");  
     this.total = 0;
     this.nbPers = 1;
     this.cboAdherentIndexSelected = -1;
     this.cboRepresentationIndexSelected=-1;
-    
+    this.nbPersMax=-1;
+    this.numAdherent =0;
+    this.numRepresentation =0;
+    this.nbPersRes = -1;
+    hashRepresentation = selectLstRepresentation();
     //Mise à jour !
     notifyObserver(new WhatChanged(type_message.MSG_RESET,this.cboAdherentIndexSelected,this.cboRepresentationIndexSelected,this.nbPers,this.total));
   }
@@ -89,14 +94,35 @@ public class ModelReservation extends AbstractModel{
             this.nbPersRes = hashRepresentation.get(this.numRepresentation).getNbPersRes();
             setTotal();
             notifyObserver(new WhatChanged(type_message.MSG_CBO_REPRESENTATION,this.total));
+           
+            if ((this.nbPersMax-this.nbPersRes) == 0) 
+                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
+            else if ((this.nbPersMax-this.nbPersRes) <this.nbPers)
+                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+(this.nbPersMax-this.nbPersRes)+" places pour cette représentation"));
+            else 
+                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
+           
         }
     }
 
     @Override
     public void setNbPersonnes(int nbPers) {
+        int nbPlacesRestantes = this.getPersMax()-this.getPersRes();
+        if (this.getPersMax() != -1) {
+            if (nbPers>nbPlacesRestantes) {        
+                if ((this.nbPersMax-this.nbPersRes) == 0)
+                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
+                else if ((this.nbPersMax-this.nbPersRes) <this.nbPers) {
+                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+(this.nbPersMax-this.nbPersRes)+" places pour cette représentation"));
+                    nbPers = nbPlacesRestantes;
+                } else 
+                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
+            }
+
         this.nbPers=nbPers;
         setTotal();
         notifyObserver(new WhatChanged(type_message.MSG_NBPERS,this.nbPers,this.total));
+        }
     }
     
     public  int getPersMax() {
@@ -120,7 +146,7 @@ public class ModelReservation extends AbstractModel{
         String req = "select numAdherent, TRIM(nomAdherent), TRIM(prenomAdherent) from adherent";
         
         ResultSet rs = interbd.exec(req);
-                try {
+        try {
             while (rs.next()) {
                 Adherent a = new Adherent(rs.getInt(1),rs.getString(2), rs.getString(3));                     
                 hash.put( rs.getInt(1),a);
@@ -160,11 +186,13 @@ public class ModelReservation extends AbstractModel{
     public void insertReservation() {
          Reservation r = new Reservation(numRepresentation, numAdherent, nbPers);
          
-         String req =  "insert into RESERVATION (NUMREPRESENTATION, NUMADHERENT, NBPERSONNES) VALUES ("+
-                        r.getNumRepresentation()+","+r.getNumAdherent()+","+r.getNbPersonnes()+")";
+         String req =  "insert into RESERVATION (NUMREPRESENTATION, NUMADHERENT, NBPERSONNES,dateresa) VALUES ("+
+                        r.getNumRepresentation()+","+r.getNumAdherent()+","+r.getNbPersonnes()+",sysdate)";
          
          System.out.println("req : "+req);
          int ret = interbd.update(req);
+         if (ret==1) 
+             interbd.update("commit");
     }
 
     public void closeDB() {
@@ -174,16 +202,25 @@ public class ModelReservation extends AbstractModel{
     public boolean control() {
         boolean bOk = true;
         
-        if (this.numAdherent == 0) {
+        if ((this.numAdherent == 0) || (this.numRepresentation == 0) || (this.nbPers == 0)){
             bOk = false;
+            notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Veuillez renseigner tous les champs"));
+        } else 
+            notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
+        
+        int nbPlacesRestantes = this.getPersMax()-this.getPersRes();
+        if (bOk) {
+            if (this.nbPers>nbPlacesRestantes) {        
+                bOk=false;
+                if ((this.nbPersMax-this.nbPersRes) == 0)
+                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
+                else if ((this.nbPersMax-this.nbPersRes) <this.nbPers) {
+                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+(this.nbPersMax-this.nbPersRes)+" places pour cette représentation"));
+                    nbPers = nbPlacesRestantes;
+                } else 
+                    notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
+            }
         }
-            
-        if (this.numRepresentation == 0)
-            bOk = false;
-        
-        if (this.nbPers == 0)
-            bOk= false;
-        
         return bOk;
     }
             

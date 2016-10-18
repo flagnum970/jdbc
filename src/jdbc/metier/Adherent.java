@@ -14,6 +14,12 @@ public class Adherent {
     private String nomAdhrent;
     private String prenomAdherent;
     
+    /**
+     * Constructeur d'un adhérent
+     * @param num
+     * @param nom
+     * @param prenom 
+     */
     public Adherent(int num,String nom, String prenom) {
         this.numAdherent = num;
         this.nomAdhrent = nom;

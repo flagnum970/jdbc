@@ -10,33 +10,31 @@ import java.util.Set;
 import jdbc.modele.AbstractModel;
 
 /**
- *
+ * Classe abstract du contrôleur
  * @author cflagollet
  */
 public abstract class AbstractControler {
-  protected AbstractModel model;
+  protected AbstractModel model; // le controleur ne connait que le model 
   
+  /** constructeur
+   * 
+   * @param model 
+   */
   public AbstractControler(AbstractModel model){
     this.model = model; 
    }
   
-  public abstract void closeDB();
+  public abstract void quit();
   
-  public void setAdherent(int numAdherent){
-      model.setAdherent(numAdherent);
-  }
+  public abstract void setAdherent(int numAdherent);
   
   public abstract void setNbPersonnes(String sNbPers);
     
-  public void setRepresentation(int numRepresentation){ 
-    model.setRepresentation(numRepresentation);
-  }
-   
-  //Efface
+  public abstract void setRepresentation(int numRepresentation);
+  
   public abstract void reset(); 
    
   public abstract void save();
   
-  //Méthode de contrôle
   abstract boolean control();
 }

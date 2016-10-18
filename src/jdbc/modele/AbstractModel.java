@@ -42,26 +42,23 @@ public abstract class AbstractModel implements Observable {
   public abstract LinkedHashMap<Integer, Representation> selectLstRepresentation(); 
   
   public abstract void setPersMax(int maxPers); 
-  public abstract void setPersRes(int nbPersRep);
-   
+  public abstract void setPersRes(int nbPersRep); 
   public abstract int getPersMax(); 
   public abstract int getPersRes();
-  
-  public abstract void closeDB();
-
   public abstract void initModelReservation();
   public abstract void reset();
-  
   public abstract void setTotal();
   public abstract void setAdherent(int IndexAdherent) ;
   public abstract void setRepresentation(int numRepresentation);
   public abstract void setNbPersonnes(int nbPers);
-  
   public abstract void insertReservation();
-  
   public abstract boolean control();
   
-  //Implémentation du pattern observer
+  public abstract void closeDB();
+  
+  /**
+   * Implémentation du pattern observer
+   */
   @Override
   public void addObserver(Observer obs) {
     this.listObserver.add(obs);
