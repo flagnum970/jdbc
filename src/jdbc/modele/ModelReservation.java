@@ -7,6 +7,8 @@ package jdbc.modele;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,6 +155,7 @@ public class ModelReservation extends AbstractModel{
      * @return : renvoie une Linked HashMap (donc qui respecte l'ordre d'insertion)
      */        
     public LinkedHashMap<Integer,Representation>  selectLstRepresentation() {
+        java.util.Date dateRep=null;
         String req =    "select r.numRepresentation,r.numSpectacle,r.numSalle,r.dateRepresentation,r.tarif,trim(s.nomspectacle), \n" +
                         "sa.nbplaces,sum(rs.nbpersonnes) \n" +
                         "from representation r join spectacle s on r.numspectacle = s.numspectacle \n" +
@@ -165,6 +168,7 @@ public class ModelReservation extends AbstractModel{
          ResultSet rs = interbd.exec(req);
                 try {
             while (rs.next()) {
+              
                 Representation r = new Representation(rs.getInt(1),rs.getInt(2),rs.getInt(3),rs.getDate(4),
                                                       rs.getDouble(5),rs.getString(6),rs.getInt(7),rs.getInt(8));                                    
                 hash.put( rs.getInt(1),r);

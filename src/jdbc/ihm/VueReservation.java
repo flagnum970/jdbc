@@ -7,6 +7,7 @@ package jdbc.ihmMPT;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import jdbc.observer.Observer;
 import jdbc.controler.AbstractControler;
@@ -227,7 +228,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
                                 jCboRepresentation.removeAll();
                                 LinkedHashMap<Integer,Representation> hashR =(LinkedHashMap<Integer,Representation>) wc.getO3();
                                 for (Representation r : hashR.values()) {
-                                    jCboRepresentation.addItem(r.getDateRepresentation()+" "+r.getNomSpectacle());
+                                    jCboRepresentation.addItem(new SimpleDateFormat("dd/MM/yyyy").format(r.getDateRepresentation())+" "+r.getNomSpectacle());
                                 }  
                                 jCboRepresentation.setSelectedIndex(-1);
                                 jCboRepresentation.addActionListener(new java.awt.event.ActionListener() {
