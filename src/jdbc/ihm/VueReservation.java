@@ -253,7 +253,6 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
               case MSG_ERREUR   :
                                 jLblErreur.setText(wc.getErreur());
               default           : break;
-
           }
 
     }
