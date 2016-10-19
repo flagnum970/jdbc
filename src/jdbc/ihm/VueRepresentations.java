@@ -144,7 +144,7 @@ public class VueRepresentations extends javax.swing.JFrame implements Observer {
     
     private void initTailleCols() 
     {
-        int[] tailleCol = {27,113,30,81};
+        int[] tailleCol = {18,220,30,30};
         for (int i=0;i<tailleCol.length;i++)
             jTblRep.getColumnModel().getColumn(i).setPreferredWidth(tailleCol[i]);       
     }
