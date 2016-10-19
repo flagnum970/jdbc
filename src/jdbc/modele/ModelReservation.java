@@ -26,13 +26,13 @@ public class ModelReservation extends AbstractModel{
 
     public ModelReservation(InterBD interbd) {
         super(interbd);
-        hashAdherent = selectLstAdherent();//= new LinkedHashMap<Integer, Adherent>();
+        hashAdherent = selectLstAdherent();
         hashRepresentation = selectLstRepresentation();   
     }
 
     public void initModelReservation() {
         reset();
-        notifyObserver(new WhatChanged(type_message.MSG_INIT, 1,selectLstAdherent(),selectLstRepresentation(),this.nbPers,this.total));
+        notifyObserver(new WhatChanged(type_message.MSG_INIT, 1,selectLstAdherent(),selectLstRepresentation(),this.total));
     }
     
     public void setReservation(int numAdherent, int numRepresentation, int nbPersonnes,Date dateJour )
@@ -49,7 +49,6 @@ public class ModelReservation extends AbstractModel{
     
     public void setPersRes(int nbPersRes) {
       this.nbPersRes= nbPersRes;
-      
     }
     
   /**
@@ -95,8 +94,7 @@ public class ModelReservation extends AbstractModel{
             setTotal();
             notifyObserver(new WhatChanged(type_message.MSG_CBO_REPRESENTATION,this.total));
            
-        Boolean bOk = controlNbPlaces();
-           
+        Boolean bOk = controlNbPlaces();    
         }
     }
 
@@ -217,20 +215,21 @@ public class ModelReservation extends AbstractModel{
     }
     
     private boolean controlNbPlaces() {
-        Boolean bOk = true;
+        Boolean bOk = false;
         int nbPlacesRestantes = this.getPersMax()-this.getPersRes();
         
-        if (this.nbPers>nbPlacesRestantes) {        
-            bOk=false;
-            if (nbPlacesRestantes == 0)
-                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
-            else 
-                notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+nbPlacesRestantes+" places pour cette représentation"));
-        } else 
+        if (nbPlacesRestantes == 0)
+            notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Cette représentation affiche complet"));
+        else if (this.nbPers>nbPlacesRestantes) 
+            notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Il ne reste que "+nbPlacesRestantes+" places pour cette représentation"));
+        else if (this.nbPers==0)
+            notifyObserver(new WhatChanged(type_message.MSG_ERREUR,"Veuillez saisir un nombre de places"));
+        else {
             notifyObserver(new WhatChanged(type_message.MSG_ERREUR,""));
+            bOk = true; 
+        }
         
         return bOk;
     }
-            
-    
+           
 }

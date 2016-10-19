@@ -14,12 +14,40 @@ package jdbc.observer;
 public class  WhatChanged {
 
 // messages indiquant la nature du changement
-public enum type_message {MSG_CBO_ADHERENT,MSG_CBO_REPRESENTATION,MSG_TOTAL,MSG_RESET,MSG_INIT,MSG_NBPERS,MSG_ERREUR};
+    public enum type_message {MSG_CBO_ADHERENT,MSG_CBO_REPRESENTATION,MSG_TOTAL,MSG_RESET,MSG_INIT,MSG_NBPERS,MSG_ERREUR};
 
 // Variables d’instance
-  public  type_message mess;
-  public Object O1,O2,O3,O4,O5;  // 03,04,… si nécessaire !
-  public String erreur;
+    private  type_message mess;
+    private Object O1,O2,O3,O4,O5;  // 03,04,… si nécessaire !
+    private String erreur;
+
+    public type_message getMess() {
+        return mess;
+    }
+
+    public Object getO1() {
+        return O1;
+    }
+
+    public Object getO2() {
+        return O2;
+    }
+
+    public Object getO3() {
+        return O3;
+    }
+
+    public Object getO4() {
+        return O4;
+    }
+
+    public Object getO5() {
+        return O5;
+    }
+
+    public String getErreur() {
+        return erreur;
+    }
   
 // Constructeurs utiles
   public WhatChanged(type_message mess) {

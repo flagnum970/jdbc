@@ -10,9 +10,11 @@ import java.awt.Toolkit;
 import java.util.LinkedHashMap;
 import jdbc.observer.Observer;
 import jdbc.controler.AbstractControler;
+import jdbc.controler.ControlerReservation;
 import jdbc.metier.Adherent;
 import jdbc.metier.Representation;
 import jdbc.modele.AbstractModel;
+import jdbc.modele.ModelReservation;
 import jdbc.observer.WhatChanged;
 
 /**
@@ -22,19 +24,18 @@ import jdbc.observer.WhatChanged;
 public class VueReservation extends javax.swing.JFrame implements Observer {
 
   //L'instance de notre objet contrôleur
-  private AbstractControler controler;
+  private ControlerReservation controler;
   
     /**
      * Creates new form VueReservations
      */
-    public VueReservation(AbstractControler controler, AbstractModel model) {
+    public VueReservation(ControlerReservation controler) {
+        initComponents();
         
         //centrer la fenetre
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize( 1024, 768);
-        setLocation(dim.width/2 - getWidth()/2, dim.height/2 - getHeight()/2);
+        this.pack();
+        this.setLocationRelativeTo(null);
         
-        initComponents();
         this.controler= controler;
     }
 
@@ -134,9 +135,7 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
      * @param evt 
      */
     private void jBtnQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnQuitterActionPerformed
-        
-        controler.quit();        
-        
+        controler.quit();              
     }//GEN-LAST:event_jBtnQuitterActionPerformed
 
     /** 'Entrée' sur la zone de texte nombre de personnes
@@ -200,21 +199,33 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
      * Envoyé par le model
      * Utilisation de la classe WhatChanged pour savoir quelles sont les données à mettre à jour
      * @param wc 
+     * MSG_INIT :   Message Envoyé Après chaque enregistrement, et au début de l'appli
+     *              O1 Integer                                  Nombre de personnes
+     *              O2 LinkedHashMap<Integer,Adherent>          HashMap des adhérents
+     *              O3 LinkedHashMap<Integer,Representation>    HashMap des représentations
+     *              04 Double                                   Prix total à payer
+     * MSG_TOTAL    Message envoyé lorsque le nombre de personnes, ou la représentation sélectionnée change
+     *              01 Double                                   Prix total à payer
+     * MSG_NBPERS   Message envoyé quand la chaine saisie  dans nb personnnes n'est pas un nombre : mise à 0 du nb de personnes, et du prix (0.0)
+     *              01 Integer                                  Nombre de personnes
+     *              02 Double                                   Prix total à payer
+     * MSG_ERREUR   Message envoyé lors d'une erreur
+     *              01 String                                   Message à afficher
      */
     @Override
     public void update(WhatChanged wc) {
         
-          switch (wc.mess) {
-              case MSG_INIT : 
-                                this.jTxtNbPers.setText(String.valueOf((Integer)wc.O1));
-                                LinkedHashMap<Integer,Adherent> hash =(LinkedHashMap<Integer,Adherent>) wc.O2;
+          switch (wc.getMess()) {
+              case MSG_INIT     : 
+                                this.jTxtNbPers.setText(String.valueOf((Integer)wc.getO1()));
+                                LinkedHashMap<Integer,Adherent> hash =(LinkedHashMap<Integer,Adherent>) wc.getO2();
                                 jCboAdherent.removeAllItems();
                                 for (Adherent a : hash.values()) {
                                     jCboAdherent.addItem(a.getNomAdhrent()+" "+a.getPrenomAdherent());
                                 }  
                                 jCboAdherent.setSelectedIndex(-1);
                                 jCboRepresentation.removeAll();
-                                LinkedHashMap<Integer,Representation> hashR =(LinkedHashMap<Integer,Representation>) wc.O3;
+                                LinkedHashMap<Integer,Representation> hashR =(LinkedHashMap<Integer,Representation>) wc.getO3();
                                 for (Representation r : hashR.values()) {
                                     jCboRepresentation.addItem(r.getDateRepresentation()+" "+r.getNomSpectacle());
                                 }  
@@ -229,19 +240,18 @@ public class VueReservation extends javax.swing.JFrame implements Observer {
                                             jCboAdherentActionPerformed(evt);
                                         }
                                 });
-                                jTxtNbPers.setText(String.valueOf((int)wc.O4));
-                                jTxtTotal.setText(String.valueOf((double)wc.O5));
+                                jTxtTotal.setText(String.valueOf((double)wc.getO4()));
                                 break;
-              case MSG_TOTAL : 
-                                jTxtTotal.setText(String.valueOf((double)wc.O1));
+              case MSG_TOTAL    : 
+                                jTxtTotal.setText(String.valueOf((double)wc.getO1()));
                                 break;
-              case MSG_NBPERS :
-                                jTxtNbPers.setText(String.valueOf((int)wc.O1));
-                                jTxtTotal.setText(String.valueOf((double)wc.O2));
+              case MSG_NBPERS   :
+                                jTxtNbPers.setText(String.valueOf((int)wc.getO1()));
+                                jTxtTotal.setText(String.valueOf((double)wc.getO2()));
                                 break;
-              case MSG_ERREUR :
-                                jLblErreur.setText(wc.erreur);
-              default       : break;
+              case MSG_ERREUR   :
+                                jLblErreur.setText(wc.getErreur());
+              default           : break;
 
           }
 

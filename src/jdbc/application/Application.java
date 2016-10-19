@@ -7,6 +7,7 @@ package jdbc.application;
 
 import jdbc.controler.AbstractControler;
 import jdbc.controler.ControlerReservation;
+import jdbc.ihm.VueRepresentations;
 import jdbc.ihmMPT.VueReservation;
 import jdbc.interBD.InterBD;
 import jdbc.modele.AbstractModel;
@@ -36,11 +37,15 @@ public class Application {
             System.exit(0);
         }
         
-         AbstractModel mr = new ModelReservation(interbd);
-         AbstractControler cr = new ControlerReservation(mr);
-         VueReservation vr = new VueReservation(cr,mr);
+        ModelReservation mr = new ModelReservation(interbd);
+        ControlerReservation cr = new ControlerReservation(mr);
+        VueRepresentations vrs = new VueRepresentations(cr);
+        VueReservation vr = new VueReservation(cr);
         
-         mr.addObserver(vr);
+        //On ajoute les observers : VueRéservation et VueRepresentations
+         mr.addObserver(vr); 
+         mr.addObserver(vrs);
+         
          mr.initModelReservation();
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -71,6 +76,7 @@ public class Application {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                vrs.setVisible(true);
                 vr.setVisible(true);
             }
         });

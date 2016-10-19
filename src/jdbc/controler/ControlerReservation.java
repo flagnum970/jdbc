@@ -5,12 +5,13 @@
  */
 package jdbc.controler;
 import jdbc.modele.AbstractModel;
+import jdbc.modele.ModelReservation;
 /**
  *
  * @author cflagollet
  */
 public class ControlerReservation extends AbstractControler {
-    public ControlerReservation(AbstractModel modelReservation) {
+    public ControlerReservation(ModelReservation modelReservation) {
     super(modelReservation);
   }
 
@@ -23,10 +24,10 @@ public class ControlerReservation extends AbstractControler {
     int nbPers;
     try {
            nbPers = Integer.valueOf(sNbPers);
-           if (nbPers < 1) 
-                   nbPers = 1;
+           if (nbPers < 0) 
+                   nbPers = 0;
       } catch (Exception e) {
-            nbPers = 1;
+            nbPers = 0;
       }
       System.out.println("max salle : "+model.getPersMax()+ " reservé : "+model.getPersRes()+" nbpers "+nbPers);
       
