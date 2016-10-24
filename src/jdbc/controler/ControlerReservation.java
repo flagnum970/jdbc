@@ -19,6 +19,11 @@ public class ControlerReservation extends AbstractControler {
     return  model.control();
   }
  
+  public void initModelReservation()  {
+      model.initModelReservation();
+  }
+  
+  
   public void setNbPersonnes(String sNbPers) {
     
     int nbPers;

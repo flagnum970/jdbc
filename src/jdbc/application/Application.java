@@ -8,7 +8,7 @@ package jdbc.application;
 import jdbc.controler.AbstractControler;
 import jdbc.controler.ControlerReservation;
 import jdbc.ihm.VueRepresentations;
-import jdbc.ihmMPT.VueReservation;
+import jdbc.ihm.VueReservation;
 import jdbc.interBD.InterBD;
 import jdbc.modele.AbstractModel;
 import jdbc.modele.ModelReservation;
@@ -46,7 +46,9 @@ public class Application {
          mr.addObserver(vr); 
          mr.addObserver(vrs);
          
-         mr.initModelReservation();
+         // TODO Modif pour que ce soit le controleur qui envoie
+         cr.initModelReservation();
+         
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

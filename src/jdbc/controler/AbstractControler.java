@@ -24,17 +24,5 @@ public abstract class AbstractControler {
     this.model = model; 
    }
   
-  public abstract void quit();
-  
-  public abstract void setAdherent(int numAdherent);
-  
-  public abstract void setNbPersonnes(String sNbPers);
-    
-  public abstract void setRepresentation(int numRepresentation);
-  
-  public abstract void reset(); 
-   
-  public abstract void save();
-  
-  abstract boolean control();
+
 }
